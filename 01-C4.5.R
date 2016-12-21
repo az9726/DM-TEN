@@ -9,6 +9,8 @@ m1 <- J48(Species ~ ., data = iris)
 
 m1
 
+table(iris$Species, predict(m1))
+
 summary(m1)
 
 plot(m1)
@@ -55,7 +57,7 @@ plot(m1)
 # 
 # === Summary ===
 #         
-#         Correctly Classified Instances         147               98      %
+# Correctly Classified Instances         147               98      %
 # Incorrectly Classified Instances         3                2      %
 # Kappa statistic                          0.97  
 # Mean absolute error                      0.0233
@@ -70,5 +72,14 @@ plot(m1)
 # 50  0   0 |  a = setosa
 # 0   49  1 |  b = versicolor
 # 0   2  48 |  c = virginica
+# 
+# > table(iris$Species, predict(m1))  #view the result 
+# 
+#             setosa versicolor virginica
+# setosa         50          0         0
+# versicolor      0         49         1
+# virginica       0          2        48
+# 
 # > plot(m1)
 # > 
+

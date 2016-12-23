@@ -1,5 +1,6 @@
 #决策树算法
 #C4.5 with packages (RWeka) 
+#适用于离散变量(y~.  )，y是离散型的，在处理时需要对y进行因子化。  
 
 library(RWeka)
 
@@ -83,6 +84,7 @@ plot(m1)
 # > plot(m1)
 # > 
 # 正式使用时会发现这个现象，输入的数据是100条，但是输出的数据结果不足一百条，用rpart包中的数据car.test.frame进行试验可以看到结果
+
 #> nrow(Train_Car);nrow(Test_Car)
 #[1] 45
 #[1] 15

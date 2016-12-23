@@ -1,0 +1,411 @@
+ # 决策树算法
+> # CART算法，处理的变量可以是离散的也可以是连续的。
+> # 使用rpart--计算/rpart.plot() --绘图
+> 
+> #准备原始数据
+> library(rpart) #rpart包中就有数据集 car.test.frame
+> 
+> #1加仑英里折算成百公里耗油升
+> car.test.frame$Mileage=100*4.546/(1.6*car.test.frame$Mileage) 
+> 
+> names(car.test.frame)=c("价格","产地","可靠性","油耗","类型","车重"
++                         ,"发动机功率","净马力")
+> 
+> 
+> Group_Mileage=matrix(0,60,1)  #60行1列的0矩阵
+> Group_Mileage[which(car.test.frame$"油耗">=11.6)]="A"  
+> Group_Mileage[which(car.test.frame$"油耗"<=9)]="C"
+> Group_Mileage[which(Group_Mileage==0)]="B"
+> car.test.frame$"分组油耗"=Group_Mileage 
+> # car.test.frame[1:10,c(4,9)] 
+> 
+> #准备对原始数据进行分组抽样，使用sampling包
+> 
+> library(sampling)
+Warning message:
+程辑包‘sampling’是用R版本3.2.5 来建造的 
+> a=round(1/4*sum(car.test.frame$"分组油耗"=="A")) #每类取四分之一
+> b=round(1/4*sum(car.test.frame$"分组油耗"=="B"))
+> c=round(1/4*sum(car.test.frame$"分组油耗"=="C"))
+> c(a,b,c) #每类数量
+[1] 9 4 2
+> 
+> #不放回抽样（数据，分组字段，抽样数量，抽样方式 srswor--不放回/srswr--放回）
+> sub=strata(car.test.frame,stratanames="分组油耗",size=c(c,b,a),method="srswor") 
+> 
+> 
+> Train_Car=car.test.frame[-sub$ID_unit,] #学习组
+> Test_Car=car.test.frame[sub$ID_unit,] #测试组
+> nrow(Train_Car);nrow(Test_Car) # 45个样本/十五个样本
+[1] 45
+[1] 15
+> 
+> #数据准备end
+> 
+> 
+> ######### 计 算 过 程 #########################################################
+> 
+> # 计算的是 油耗 对 价格、产地、可靠性、类型、车重、发动机功率、净马力 的分组
+> formula_Car_Reg=油耗~价格+产地+可靠性+类型+车重+发动机功率+净马力
+> 
+> #rpart(计算样式,数据集,模式) anova--连续的 class--离散的
+> #method ?
+> rp_Car_Reg=rpart(formula_Car_Reg,Train_Car,method="anova")
+> 
+> rp_Car_Reg
+n= 45 
+
+node), split, n, deviance, yval
+      * denotes terminal node
+
+1) root 45 219.729700 11.964540  
+  2) 发动机功率< 134 20  32.576510  9.933095  
+    4) 价格< 9504.5 9   4.826049  8.756302 *
+    5) 价格>=9504.5 11   5.089398 10.895930 *
+  3) 发动机功率>=134 25  38.590130 13.589690  
+    6) 类型=Compact,Medium 15   7.383473 12.836950 *
+    7) 类型=Large,Sporty,Van 10   9.958351 14.718800 *
+> 
+> predict(rp_Car_Reg,car.test.frame) #根据决策树进行推断推断，
+               Eagle Summit 4               Ford Escort   4 
+                     8.756302                      8.756302 
+               Ford Festiva 4                 Honda Civic 4 
+                     8.756302                      8.756302 
+              Mazda Protege 4              Mercury Tracer 4 
+                     8.756302                      8.756302 
+              Nissan Sentra 4              Pontiac LeMans 4 
+                     8.756302                      8.756302 
+              Subaru Loyale 4                Subaru Justy 3 
+                    10.895926                      8.756302 
+             Toyota Corolla 4               Toyota Tercel 4 
+                     8.756302                      8.756302 
+           Volkswagen Jetta 4           Chevrolet Camaro V8 
+                    10.895926                     14.718802 
+                Dodge Daytona               Ford Mustang V8 
+                    14.718802                     14.718802 
+                   Ford Probe          Honda Civic CRX Si 4 
+                    10.895926                      8.756302 
+       Honda Prelude Si 4WS 4                Nissan 240SX 4 
+                    10.895926                     14.718802 
+               Plymouth Laser                   Subaru XT 4 
+                    10.895926                     10.895926 
+                    Audi 80 4               Buick Skylark 4 
+                    10.895926                     12.836945 
+          Chevrolet Beretta 4          Chrysler Le Baron V6 
+                    10.895926                     12.836945 
+                 Ford Tempo 4                Honda Accord 4 
+                    12.836945                     10.895926 
+                  Mazda 626 4           Mitsubishi Galant 4 
+                    10.895926                     10.895926 
+          Mitsubishi Sigma V6               Nissan Stanza 4 
+                    12.836945                     12.836945 
+          Oldsmobile Calais 4                 Peugeot 405 4 
+                    12.836945                     10.895926 
+              Subaru Legacy 4                Toyota Camry 4 
+                    12.836945                     10.895926 
+                  Volvo 240 4               Acura Legend V6 
+                    12.836945                     12.836945 
+              Buick Century 4       Chrysler Le Baron Coupe 
+                    12.836945                     12.836945 
+       Chrysler New Yorker V6              Eagle Premier V6 
+                    12.836945                     12.836945 
+               Ford Taurus V6           Ford Thunderbird V6 
+                    12.836945                     12.836945 
+             Hyundai Sonata 4                  Mazda 929 V6 
+                    12.836945                     12.836945 
+             Nissan Maxima V6    Oldsmobile Cutlass Ciera 4 
+                    12.836945                     12.836945 
+Oldsmobile Cutlass Supreme V6             Toyota Cressida 6 
+                    12.836945                     12.836945 
+            Buick Le Sabre V6          Chevrolet Caprice V8 
+                    14.718802                     14.718802 
+   Ford LTD Crown Victoria V8       Chevrolet Lumina APV V6 
+                    14.718802                     14.718802 
+       Dodge Grand Caravan V6              Ford Aerostar V6 
+                    14.718802                     14.718802 
+                 Mazda MPV V6            Mitsubishi Wagon 4 
+                    14.718802                     14.718802 
+              Nissan Axxess 4                  Nissan Van 4 
+                    14.718802                     14.718802 
+>                                   #先是决策树，后是输入数据
+> 
+> ##########一 些 参 数 #########################################################
+> 
+> #改变参数：minsplit--叶子节点的最小容量，这个数越小，生成的树就越大
+> #默认值是20
+> rp_Car_Reg1=rpart(formula_Car_Reg,Train_Car,method="anova",minsplit=10)
+> 
+> #改变参数：cp--复杂度参数,越小，树越大,默认0.01
+> rp_Car_Reg2=rpart(formula_Car_Reg,Train_Car,method="anova",cp=0.1)
+> 
+> #改变参数：maxdepth=1--层级参数,越大，树越大，在32位的系统中最大为30
+> rp_Car_Reg3=rpart(formula_Car_Reg,Train_Car,method="anova",maxdepth=10)
+> 
+> #数的复杂程度，有多参数共同决定
+> rp_Car_Reg4=rpart(formula_Car_Reg,Train_Car,method="anova",
++                   maxdepth=10,cp=0.0001,minsplit=5)
+> 
+> printcp(rp_Car_Reg)
+
+Regression tree:
+rpart(formula = formula_Car_Reg, data = Train_Car, method = "anova")
+
+Variables actually used in tree construction:
+[1] 发动机功率 价格       类型      
+
+Root node error: 219.73/45 = 4.8829
+
+n= 45 
+
+        CP nsplit rel error  xerror    xstd
+1 0.676117      0   1.00000 1.02618 0.16515
+2 0.103132      1   0.32388 0.36801 0.05316
+3 0.096702      2   0.22075 0.39829 0.05877
+4 0.010000      3   0.12405 0.28369 0.05064
+> printcp(rp_Car_Reg1)
+
+Regression tree:
+rpart(formula = formula_Car_Reg, data = Train_Car, method = "anova", 
+    minsplit = 10)
+
+Variables actually used in tree construction:
+[1] 车重       发动机功率 价格       类型      
+
+Root node error: 219.73/45 = 4.8829
+
+n= 45 
+
+        CP nsplit rel error  xerror     xstd
+1 0.676117      0  1.000000 1.04345 0.167419
+2 0.103132      1  0.323883 0.38209 0.052230
+3 0.098415      2  0.220751 0.38847 0.062096
+4 0.031255      3  0.122336 0.29294 0.060205
+5 0.014032      4  0.091081 0.30496 0.065503
+6 0.010000      5  0.077050 0.28994 0.062776
+> printcp(rp_Car_Reg3)
+
+Regression tree:
+rpart(formula = formula_Car_Reg, data = Train_Car, method = "anova", 
+    maxdepth = 10)
+
+Variables actually used in tree construction:
+[1] 发动机功率 价格       类型      
+
+Root node error: 219.73/45 = 4.8829
+
+n= 45 
+
+        CP nsplit rel error  xerror     xstd
+1 0.676117      0   1.00000 1.04528 0.164720
+2 0.103132      1   0.32388 0.47264 0.088553
+3 0.096702      2   0.22075 0.49285 0.129044
+4 0.010000      3   0.12405 0.39745 0.127290
+> printcp(rp_Car_Reg4)
+
+Regression tree:
+rpart(formula = formula_Car_Reg, data = Train_Car, method = "anova", 
+    maxdepth = 10, cp = 1e-04, minsplit = 5)
+
+Variables actually used in tree construction:
+[1] 产地       车重       发动机功率 价格       净马力     可靠性    
+[7] 类型      
+
+Root node error: 219.73/45 = 4.8829
+
+n= 45 
+
+          CP nsplit rel error  xerror     xstd
+1  0.6761173      0  1.000000 1.03306 0.165470
+2  0.1031316      1  0.323883 0.36642 0.052795
+3  0.0984149      2  0.220751 0.45798 0.070206
+4  0.0312549      3  0.122336 0.30409 0.063557
+5  0.0173061      4  0.091081 0.30881 0.069811
+6  0.0140318      5  0.073775 0.29229 0.066364
+7  0.0095681      6  0.059743 0.29255 0.066278
+8  0.0062479      7  0.050175 0.27893 0.063721
+9  0.0039813      8  0.043927 0.31489 0.075527
+10 0.0030567      9  0.039946 0.33789 0.078167
+11 0.0030538     10  0.036889 0.32750 0.077372
+12 0.0024793     12  0.030782 0.33527 0.077183
+13 0.0013334     14  0.025823 0.33356 0.074542
+14 0.0001000     15  0.024490 0.33303 0.074790
+> 
+> 
+> ##########辅 助 命 令 #########################################################
+> print(rp_Car_Reg) #列出决策树
+n= 45 
+
+node), split, n, deviance, yval
+      * denotes terminal node
+
+1) root 45 219.729700 11.964540  
+  2) 发动机功率< 134 20  32.576510  9.933095  
+    4) 价格< 9504.5 9   4.826049  8.756302 *
+    5) 价格>=9504.5 11   5.089398 10.895930 *
+  3) 发动机功率>=134 25  38.590130 13.589690  
+    6) 类型=Compact,Medium 15   7.383473 12.836950 *
+    7) 类型=Large,Sporty,Van 10   9.958351 14.718800 *
+> printcp(rp_Car_Reg) #列出 cp统计量 
+
+Regression tree:
+rpart(formula = formula_Car_Reg, data = Train_Car, method = "anova")
+
+Variables actually used in tree construction:
+[1] 发动机功率 价格       类型      
+
+Root node error: 219.73/45 = 4.8829
+
+n= 45 
+
+        CP nsplit rel error  xerror    xstd
+1 0.676117      0   1.00000 1.02618 0.16515
+2 0.103132      1   0.32388 0.36801 0.05316
+3 0.096702      2   0.22075 0.39829 0.05877
+4 0.010000      3   0.12405 0.28369 0.05064
+> summary(rp_Car_Reg) #列出更详细的情况
+Call:
+rpart(formula = formula_Car_Reg, data = Train_Car, method = "anova")
+  n= 45 
+
+          CP nsplit rel error    xerror       xstd
+1 0.67611727      0 1.0000000 1.0261809 0.16514618
+2 0.10313157      1 0.3238827 0.3680096 0.05315954
+3 0.09670204      2 0.2207512 0.3982851 0.05877043
+4 0.01000000      3 0.1240491 0.2836890 0.05063996
+
+Variable importance
+发动机功率       车重       类型     净马力       价格       产地 
+        23         20         18         16         14          9 
+
+Node number 1: 45 observations,    complexity param=0.6761173
+  mean=11.96454, MSE=4.882881 
+  left son=2 (20 obs) right son=3 (25 obs)
+  Primary splits:
+      发动机功率 < 134     to the left,  improve=0.6761173, (0 missing)
+      车重       < 2755    to the left,  improve=0.5751579, (0 missing)
+      价格       < 11876   to the left,  improve=0.5313965, (0 missing)
+      类型       splits as  LRRLLR,      improve=0.5197172, (0 missing)
+      净马力     < 104     to the left,  improve=0.4725659, (0 missing)
+  Surrogate splits:
+      车重   < 2860    to the left,  agree=0.911, adj=0.80, (0 split)
+      净马力 < 104     to the left,  agree=0.867, adj=0.70, (0 split)
+      类型   splits as  RRRLLR,      agree=0.844, adj=0.65, (0 split)
+      价格   < 11484.5 to the left,  agree=0.800, adj=0.55, (0 split)
+      产地   splits as  LLRLL-RR,    agree=0.733, adj=0.40, (0 split)
+
+Node number 2: 20 observations,    complexity param=0.1031316
+  mean=9.933095, MSE=1.628826 
+  left son=4 (9 obs) right son=5 (11 obs)
+  Primary splits:
+      价格       < 9504.5  to the left,  improve=0.6956259, (0 missing)
+      发动机功率 < 97.5    to the left,  improve=0.6065896, (0 missing)
+      车重       < 2312.5  to the left,  improve=0.4226051, (0 missing)
+      净马力     < 91      to the left,  improve=0.2980028, (0 missing)
+      类型       splits as  R--LR-,      improve=0.2873360, (0 missing)
+  Surrogate splits:
+      发动机功率 < 102.5   to the left,  agree=0.95, adj=0.889, (0 split)
+      车重       < 2437.5  to the left,  agree=0.90, adj=0.778, (0 split)
+      类型       splits as  R--LR-,      agree=0.85, adj=0.667, (0 split)
+      净马力     < 91      to the left,  agree=0.80, adj=0.556, (0 split)
+      产地       splits as  RRRLL--R,    agree=0.70, adj=0.333, (0 split)
+
+Node number 3: 25 observations,    complexity param=0.09670204
+  mean=13.58969, MSE=1.543605 
+  left son=6 (15 obs) right son=7 (10 obs)
+  Primary splits:
+      类型       splits as  LRL-RR,      improve=0.55061500, (0 missing)
+      车重       < 3465    to the left,  improve=0.38860480, (0 missing)
+      净马力     < 143.5   to the left,  improve=0.19019810, (0 missing)
+      发动机功率 < 181.5   to the left,  improve=0.15765460, (0 missing)
+      价格       < 13572   to the left,  improve=0.08383705, (0 missing)
+  Surrogate splits:
+      车重       < 3287.5  to the left,  agree=0.88, adj=0.7, (0 split)
+      发动机功率 < 195.5   to the left,  agree=0.76, adj=0.4, (0 split)
+      净马力     < 143.5   to the left,  agree=0.72, adj=0.3, (0 split)
+      价格       < 13572   to the left,  agree=0.64, adj=0.1, (0 split)
+
+Node number 4: 9 observations
+  mean=8.756302, MSE=0.5362277 
+
+Node number 5: 11 observations
+  mean=10.89593, MSE=0.4626726 
+
+Node number 6: 15 observations
+  mean=12.83695, MSE=0.4922315 
+
+Node number 7: 10 observations
+  mean=14.7188, MSE=0.9958351 
+
+> 
+> ##########画 图 ###############################################################
+> library(rpart.plot)
+Warning message:
+程辑包‘rpart.plot’是用R版本3.2.5 来建造的 
+> 
+> rp_Car_Plot=rpart(formula_Car_Reg,Train_Car,method="anova",minsplit=10)
+> print(rp_Car_Plot)
+n= 45 
+
+node), split, n, deviance, yval
+      * denotes terminal node
+
+ 1) root 45 219.7297000 11.964540  
+   2) 发动机功率< 134 20  32.5765100  9.933095  
+     4) 价格< 9504.5 9   4.8260490  8.756302 *
+     5) 价格>=9504.5 11   5.0893980 10.895930 *
+   3) 发动机功率>=134 25  38.5901300 13.589690  
+     6) 车重< 3572.5 19  14.8431200 13.067050  
+      12) 类型=Compact,Large,Medium 16   7.6028020 12.806720  
+        24) 价格< 12324.5 5   0.7813276 12.155610 *
+        25) 价格>=12324.5 11   3.7382770 13.102670 *
+      13) 类型=Sporty,Van 3   0.3727009 14.455480 *
+     7) 车重>=3572.5 6   2.1223250 15.244720 *
+> rpart.plot(rp_Car_Plot)
+> rpart.plot(rp_Car_Plot,type=4) #type可以取(1,2,3,4),取4时显示最明晰
+> rpart.plot(rp_Car_Plot,type=4,branch=1) #线用直角联结
+> rpart.plot(rp_Car_Plot,type=4,fallen.leaves=TRUE) #所有层级的叶子节点排成一行
+> 
+> ##############分类变量########################################################
+> 
+> formula_Car_Cla=分组油耗~价格+产地+可靠性+类型+车重+发动机功率+净马力
+> rp_Car_Cla=rpart(formula_Car_Cla,Train_Car,method="class",minsplit=5)
+> print(rp_Car_Cla)
+n= 45 
+
+node), split, n, loss, yval, (yprob)
+      * denotes terminal node
+
+1) root 45 19 A (0.57777778 0.26666667 0.15555556)  
+  2) 发动机功率>=134 25  1 A (0.96000000 0.04000000 0.00000000) *
+  3) 发动机功率< 134 20  9 B (0.10000000 0.55000000 0.35000000)  
+    6) 车重>=2285 14  3 B (0.14285714 0.78571429 0.07142857) *
+    7) 车重< 2285 6  0 C (0.00000000 0.00000000 1.00000000) *
+> rpart.plot(rp_Car_Cla,type=4,fallen.leaves=TRUE)
+> 
+> pre_Car_Cla=predict(rp_Car_Cla,Test_Car,type="class") #根据决策树统计
+> pre_Car_Cla
+         Eagle Summit 4         Mazda Protege 4 
+                      B                       B 
+       Mercury Tracer 4           Dodge Daytona 
+                      B                       A 
+ Honda Prelude Si 4WS 4          Honda Accord 4 
+                      B                       B 
+    Chevrolet Camaro V8          Nissan 240SX 4 
+                      A                       A 
+           Ford Tempo 4         Nissan Stanza 4 
+                      A                       A 
+Chrysler Le Baron Coupe        Eagle Premier V6 
+                      A                       A 
+    Ford Thunderbird V6            Mazda 929 V6 
+                      A                       A 
+Chevrolet Lumina APV V6 
+                      A 
+Levels: A B C
+> table(Test_Car$分组油耗,pre_Car_Cla)
+   pre_Car_Cla
+    A B C
+  A 9 0 0
+  B 1 3 0
+  C 0 2 0
+> (p=sum(as.numeric(pre_Car_Cla!=Test_Car$分组油耗))/nrow(Test_Car)) #测试集的错误率
+[1] 0.2

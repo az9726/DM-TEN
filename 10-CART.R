@@ -1,70 +1,70 @@
-# ¾ö²ßÊ÷Ëã·¨
-# CARTËã·¨£¬´¦ÀíµÄ±äÁ¿¿ÉÒÔÊÇÀëÉ¢µÄÒ²¿ÉÒÔÊÇÁ¬ÐøµÄ¡£
-# Ê¹ÓÃrpart--¼ÆËã/rpart.plot() --»æÍ¼
+ï»¿# å†³ç­–æ ‘ç®—æ³•
+# CARTç®—æ³•ï¼Œå¤„ç†çš„å˜é‡å¯ä»¥æ˜¯ç¦»æ•£çš„ä¹Ÿå¯ä»¥æ˜¯è¿žç»­çš„ã€‚
+# ä½¿ç”¨rpart--è®¡ç®—/rpart.plot() --ç»˜å›¾
 
-#×¼±¸Ô­Ê¼Êý¾Ý
-library(rpart) #rpart°üÖÐ¾ÍÓÐÊý¾Ý¼¯ car.test.frame
+#å‡†å¤‡åŽŸå§‹æ•°æ®
+library(rpart) #rpartåŒ…ä¸­å°±æœ‰æ•°æ®é›† car.test.frame
 
-#1¼ÓÂØÓ¢ÀïÕÛËã³É°Ù¹«ÀïºÄÓÍÉý
+#1åŠ ä»‘è‹±é‡ŒæŠ˜ç®—æˆç™¾å…¬é‡Œè€—æ²¹å‡
 car.test.frame$Mileage=100*4.546/(1.6*car.test.frame$Mileage) 
 
-names(car.test.frame)=c("¼Û¸ñ","²úµØ","¿É¿¿ÐÔ","ÓÍºÄ","ÀàÐÍ","³µÖØ"
-                        ,"·¢¶¯»ú¹¦ÂÊ","¾»ÂíÁ¦")
+names(car.test.frame)=c("ä»·æ ¼","äº§åœ°","å¯é æ€§","æ²¹è€—","ç±»åž‹","è½¦é‡"
+                        ,"å‘åŠ¨æœºåŠŸçŽ‡","å‡€é©¬åŠ›")
 
 
-Group_Mileage=matrix(0,60,1)  #60ÐÐ1ÁÐµÄ0¾ØÕó
-Group_Mileage[which(car.test.frame$"ÓÍºÄ">=11.6)]="A"  
-Group_Mileage[which(car.test.frame$"ÓÍºÄ"<=9)]="C"
+Group_Mileage=matrix(0,60,1)  #60è¡Œ1åˆ—çš„0çŸ©é˜µ
+Group_Mileage[which(car.test.frame$"æ²¹è€—">=11.6)]="A"  
+Group_Mileage[which(car.test.frame$"æ²¹è€—"<=9)]="C"
 Group_Mileage[which(Group_Mileage==0)]="B"
-car.test.frame$"·Ö×éÓÍºÄ"=Group_Mileage 
+car.test.frame$"åˆ†ç»„æ²¹è€—"=Group_Mileage 
 # car.test.frame[1:10,c(4,9)] 
 
-#×¼±¸¶ÔÔ­Ê¼Êý¾Ý½øÐÐ·Ö×é³éÑù£¬Ê¹ÓÃsampling°ü
+#å‡†å¤‡å¯¹åŽŸå§‹æ•°æ®è¿›è¡Œåˆ†ç»„æŠ½æ ·ï¼Œä½¿ç”¨samplingåŒ…
 
 library(sampling)
-a=round(1/4*sum(car.test.frame$"·Ö×éÓÍºÄ"=="A")) #Ã¿ÀàÈ¡ËÄ·ÖÖ®Ò»
-b=round(1/4*sum(car.test.frame$"·Ö×éÓÍºÄ"=="B"))
-c=round(1/4*sum(car.test.frame$"·Ö×éÓÍºÄ"=="C"))
-c(a,b,c) #Ã¿ÀàÊýÁ¿
+a=round(1/4*sum(car.test.frame$"åˆ†ç»„æ²¹è€—"=="A")) #æ¯ç±»å–å››åˆ†ä¹‹ä¸€
+b=round(1/4*sum(car.test.frame$"åˆ†ç»„æ²¹è€—"=="B"))
+c=round(1/4*sum(car.test.frame$"åˆ†ç»„æ²¹è€—"=="C"))
+c(a,b,c) #æ¯ç±»æ•°é‡
 
-#²»·Å»Ø³éÑù£¨Êý¾Ý£¬·Ö×é×Ö¶Î£¬³éÑùÊýÁ¿£¬³éÑù·½Ê½ srswor--²»·Å»Ø/srswr--·Å»Ø£©
-sub=strata(car.test.frame,stratanames="·Ö×éÓÍºÄ",size=c(c,b,a),method="srswor") 
-
-
-Train_Car=car.test.frame[-sub$ID_unit,] #Ñ§Ï°×é
-Test_Car=car.test.frame[sub$ID_unit,] #²âÊÔ×é
-nrow(Train_Car);nrow(Test_Car) # 45¸öÑù±¾/Ê®Îå¸öÑù±¾
-
-#Êý¾Ý×¼±¸end
+#ä¸æ”¾å›žæŠ½æ ·ï¼ˆæ•°æ®ï¼Œåˆ†ç»„å­—æ®µï¼ŒæŠ½æ ·æ•°é‡ï¼ŒæŠ½æ ·æ–¹å¼ srswor--ä¸æ”¾å›ž/srswr--æ”¾å›žï¼‰
+sub=strata(car.test.frame,stratanames="åˆ†ç»„æ²¹è€—",size=c(c,b,a),method="srswor") 
 
 
-######### ¼Æ Ëã ¹ý ³Ì #########################################################
+Train_Car=car.test.frame[-sub$ID_unit,] #å­¦ä¹ ç»„
+Test_Car=car.test.frame[sub$ID_unit,] #æµ‹è¯•ç»„
+nrow(Train_Car);nrow(Test_Car) # 45ä¸ªæ ·æœ¬/åäº”ä¸ªæ ·æœ¬
 
-# ¼ÆËãµÄÊÇ ÓÍºÄ ¶Ô ¼Û¸ñ¡¢²úµØ¡¢¿É¿¿ÐÔ¡¢ÀàÐÍ¡¢³µÖØ¡¢·¢¶¯»ú¹¦ÂÊ¡¢¾»ÂíÁ¦ µÄ·Ö×é
-formula_Car_Reg=ÓÍºÄ~¼Û¸ñ+²úµØ+¿É¿¿ÐÔ+ÀàÐÍ+³µÖØ+·¢¶¯»ú¹¦ÂÊ+¾»ÂíÁ¦
+#æ•°æ®å‡†å¤‡end
 
-#rpart(¼ÆËãÑùÊ½,Êý¾Ý¼¯,Ä£Ê½) anova--Á¬ÐøµÄ class--ÀëÉ¢µÄ
+
+######### è®¡ ç®— è¿‡ ç¨‹ #########################################################
+
+# è®¡ç®—çš„æ˜¯ æ²¹è€— å¯¹ ä»·æ ¼ã€äº§åœ°ã€å¯é æ€§ã€ç±»åž‹ã€è½¦é‡ã€å‘åŠ¨æœºåŠŸçŽ‡ã€å‡€é©¬åŠ› çš„åˆ†ç»„
+formula_Car_Reg=æ²¹è€—~ä»·æ ¼+äº§åœ°+å¯é æ€§+ç±»åž‹+è½¦é‡+å‘åŠ¨æœºåŠŸçŽ‡+å‡€é©¬åŠ›
+
+#rpart(è®¡ç®—æ ·å¼,æ•°æ®é›†,æ¨¡å¼) anova--è¿žç»­çš„ class--ç¦»æ•£çš„
 #method ?
 rp_Car_Reg=rpart(formula_Car_Reg,Train_Car,method="anova")
 
 rp_Car_Reg
 
-predict(rp_Car_Reg,car.test.frame) #¸ù¾Ý¾ö²ßÊ÷½øÐÐÍÆ¶ÏÍÆ¶Ï£¬
-                                  #ÏÈÊÇ¾ö²ßÊ÷£¬ºóÊÇÊäÈëÊý¾Ý
+predict(rp_Car_Reg,car.test.frame) #æ ¹æ®å†³ç­–æ ‘è¿›è¡ŒæŽ¨æ–­æŽ¨æ–­ï¼Œ
+                                  #å…ˆæ˜¯å†³ç­–æ ‘ï¼ŒåŽæ˜¯è¾“å…¥æ•°æ®
 
-##########Ò» Ð© ²Î Êý #########################################################
+##########ä¸€ äº› å‚ æ•° #########################################################
 
-#¸Ä±ä²ÎÊý£ºminsplit--Ò¶×Ó½ÚµãµÄ×îÐ¡ÈÝÁ¿£¬Õâ¸öÊýÔ½Ð¡£¬Éú³ÉµÄÊ÷¾ÍÔ½´ó
-#Ä¬ÈÏÖµÊÇ20
+#æ”¹å˜å‚æ•°ï¼šminsplit--å¶å­èŠ‚ç‚¹çš„æœ€å°å®¹é‡ï¼Œè¿™ä¸ªæ•°è¶Šå°ï¼Œç”Ÿæˆçš„æ ‘å°±è¶Šå¤§
+#é»˜è®¤å€¼æ˜¯20
 rp_Car_Reg1=rpart(formula_Car_Reg,Train_Car,method="anova",minsplit=10)
 
-#¸Ä±ä²ÎÊý£ºcp--¸´ÔÓ¶È²ÎÊý,Ô½Ð¡£¬Ê÷Ô½´ó,Ä¬ÈÏ0.01
+#æ”¹å˜å‚æ•°ï¼šcp--å¤æ‚åº¦å‚æ•°,è¶Šå°ï¼Œæ ‘è¶Šå¤§,é»˜è®¤0.01
 rp_Car_Reg2=rpart(formula_Car_Reg,Train_Car,method="anova",cp=0.1)
 
-#¸Ä±ä²ÎÊý£ºmaxdepth=1--²ã¼¶²ÎÊý,Ô½´ó£¬Ê÷Ô½´ó£¬ÔÚ32Î»µÄÏµÍ³ÖÐ×î´óÎª30
+#æ”¹å˜å‚æ•°ï¼šmaxdepth=1--å±‚çº§å‚æ•°,è¶Šå¤§ï¼Œæ ‘è¶Šå¤§ï¼Œåœ¨32ä½çš„ç³»ç»Ÿä¸­æœ€å¤§ä¸º30
 rp_Car_Reg3=rpart(formula_Car_Reg,Train_Car,method="anova",maxdepth=10)
 
-#ÊýµÄ¸´ÔÓ³Ì¶È£¬ÓÐ¶à²ÎÊý¹²Í¬¾ö¶¨
+#æ•°çš„å¤æ‚ç¨‹åº¦ï¼Œæœ‰å¤šå‚æ•°å…±åŒå†³å®š
 rp_Car_Reg4=rpart(formula_Car_Reg,Train_Car,method="anova",
                   maxdepth=10,cp=0.0001,minsplit=5)
 
@@ -74,30 +74,30 @@ printcp(rp_Car_Reg3)
 printcp(rp_Car_Reg4)
 
 
-##########¸¨ Öú Ãü Áî #########################################################
-print(rp_Car_Reg) #ÁÐ³ö¾ö²ßÊ÷
-printcp(rp_Car_Reg) #ÁÐ³ö cpÍ³¼ÆÁ¿ 
-summary(rp_Car_Reg) #ÁÐ³ö¸üÏêÏ¸µÄÇé¿ö
+##########è¾… åŠ© å‘½ ä»¤ #########################################################
+print(rp_Car_Reg) #åˆ—å‡ºå†³ç­–æ ‘
+printcp(rp_Car_Reg) #åˆ—å‡º cpç»Ÿè®¡é‡ 
+summary(rp_Car_Reg) #åˆ—å‡ºæ›´è¯¦ç»†çš„æƒ…å†µ
 
-##########»­ Í¼ ###############################################################
+##########ç”» å›¾ ###############################################################
 library(rpart.plot)
 
 rp_Car_Plot=rpart(formula_Car_Reg,Train_Car,method="anova",minsplit=10)
 print(rp_Car_Plot)
 rpart.plot(rp_Car_Plot)
-rpart.plot(rp_Car_Plot,type=4) #type¿ÉÒÔÈ¡(1,2,3,4),È¡4Ê±ÏÔÊ¾×îÃ÷Îú
-rpart.plot(rp_Car_Plot,type=4,branch=1) #ÏßÓÃÖ±½ÇÁª½á
-rpart.plot(rp_Car_Plot,type=4,fallen.leaves=TRUE) #ËùÓÐ²ã¼¶µÄÒ¶×Ó½ÚµãÅÅ³ÉÒ»ÐÐ
+rpart.plot(rp_Car_Plot,type=4) #typeå¯ä»¥å–(1,2,3,4),å–4æ—¶æ˜¾ç¤ºæœ€æ˜Žæ™°
+rpart.plot(rp_Car_Plot,type=4,branch=1) #çº¿ç”¨ç›´è§’è”ç»“
+rpart.plot(rp_Car_Plot,type=4,fallen.leaves=TRUE) #æ‰€æœ‰å±‚çº§çš„å¶å­èŠ‚ç‚¹æŽ’æˆä¸€è¡Œ
 
-##############·ÖÀà±äÁ¿########################################################
+##############åˆ†ç±»å˜é‡########################################################
 
-formula_Car_Cla=·Ö×éÓÍºÄ~¼Û¸ñ+²úµØ+¿É¿¿ÐÔ+ÀàÐÍ+³µÖØ+·¢¶¯»ú¹¦ÂÊ+¾»ÂíÁ¦
+formula_Car_Cla=åˆ†ç»„æ²¹è€—~ä»·æ ¼+äº§åœ°+å¯é æ€§+ç±»åž‹+è½¦é‡+å‘åŠ¨æœºåŠŸçŽ‡+å‡€é©¬åŠ›
 rp_Car_Cla=rpart(formula_Car_Cla,Train_Car,method="class",minsplit=5)
 print(rp_Car_Cla)
 rpart.plot(rp_Car_Cla,type=4,fallen.leaves=TRUE)
 
-pre_Car_Cla=predict(rp_Car_Cla,Test_Car,type="class") #¸ù¾Ý¾ö²ßÊ÷Í³¼Æ
+pre_Car_Cla=predict(rp_Car_Cla,Test_Car,type="class") #æ ¹æ®å†³ç­–æ ‘ç»Ÿè®¡
 pre_Car_Cla
-table(Test_Car$·Ö×éÓÍºÄ,pre_Car_Cla)
-(p=sum(as.numeric(pre_Car_Cla!=Test_Car$·Ö×éÓÍºÄ))/nrow(Test_Car)) #²âÊÔ¼¯µÄ´íÎóÂÊ
+table(Test_Car$åˆ†ç»„æ²¹è€—,pre_Car_Cla)
+(p=sum(as.numeric(pre_Car_Cla!=Test_Car$åˆ†ç»„æ²¹è€—))/nrow(Test_Car)) #æµ‹è¯•é›†çš„é”™è¯¯çŽ‡
 

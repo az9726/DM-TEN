@@ -1,6 +1,6 @@
-#¾ö²ßÊ÷Ëã·¨
+#å†³ç­–æ ‘ç®—æ³•
 #C4.5 with packages (RWeka) 
-#ÊÊÓÃÓÚÀëÉ¢±äÁ¿(y~.  )£¬yÊÇÀëÉ¢ĞÍµÄ£¬ÔÚ´¦ÀíÊ±ĞèÒª¶Ôy½øĞĞÒò×Ó»¯¡£  
+#é€‚ç”¨äºç¦»æ•£å˜é‡(y~.  )ï¼Œyæ˜¯ç¦»æ•£å‹çš„ï¼Œåœ¨å¤„ç†æ—¶éœ€è¦å¯¹yè¿›è¡Œå› å­åŒ–ã€‚  
 
 library(RWeka)
 
@@ -10,8 +10,13 @@ m1 <- J48(Species ~ ., data = iris)
 
 m1
 
-table(iris$Species, predict(m1))
+predict(m1,iris) #å†³ç­–æ ‘ï¼Œè¦è®¡ç®—çš„æ•°æ®é›†
 
+table(iris$Species, predict(m1),dnn=c("å®é™…å€¼","è®¡ç®—å€¼"))
+prop.table(table(iris$Species, predict(m1),dnn=c("å®é™…å€¼","è®¡ç®—å€¼")))
+prop.table(table(iris$Species, predict(m1),dnn=c("å®é™…å€¼","è®¡ç®—å€¼")),1)
+prop.table(table(iris$Species, predict(m1),dnn=c("å®é™…å€¼","è®¡ç®—å€¼")),1)*100
+prop.table(table(iris$Species, predict(m1),dnn=c("å®é™…å€¼","è®¡ç®—å€¼")),2)
 summary(m1)
 
 plot(m1)
@@ -19,7 +24,7 @@ plot(m1)
 
 # > library(RWeka)  
 # Warning message:
-#         ³Ì¼­°ü¡®RWeka¡¯ÊÇÓÃR°æ±¾3.2.5 À´½¨ÔìµÄ 
+#         ç¨‹è¾‘åŒ…â€˜RWekaâ€™æ˜¯ç”¨Rç‰ˆæœ¬3.2.5 æ¥å»ºé€ çš„ 
 # > summary(iris)
 # Sepal.Length    Sepal.Width     Petal.Length    Petal.Width   
 # Min.   :4.300   Min.   :2.000   Min.   :1.000   Min.   :0.100  
@@ -83,7 +88,7 @@ plot(m1)
 # 
 # > plot(m1)
 # > 
-# ÕıÊ½Ê¹ÓÃÊ±»á·¢ÏÖÕâ¸öÏÖÏó£¬ÊäÈëµÄÊı¾İÊÇ100Ìõ£¬µ«ÊÇÊä³öµÄÊı¾İ½á¹û²»×ãÒ»°ÙÌõ£¬ÓÃrpart°üÖĞµÄÊı¾İcar.test.frame½øĞĞÊÔÑé¿ÉÒÔ¿´µ½½á¹û
+# æ­£å¼ä½¿ç”¨æ—¶ä¼šå‘ç°è¿™ä¸ªç°è±¡ï¼Œè¾“å…¥çš„æ•°æ®æ˜¯100æ¡ï¼Œä½†æ˜¯è¾“å‡ºçš„æ•°æ®ç»“æœä¸è¶³ä¸€ç™¾æ¡ï¼Œç”¨rpartåŒ…ä¸­çš„æ•°æ®car.test.frameè¿›è¡Œè¯•éªŒå¯ä»¥çœ‹åˆ°ç»“æœ
 
 #> nrow(Train_Car);nrow(Test_Car)
 #[1] 45
@@ -109,8 +114,8 @@ plot(m1)
 # 20  0  0 |  a = A
 #  1  6  3 |  b = B
 #  0  0  6 |  c = C
-#Train_CarÖĞÓĞ45ÌõÊı¾İ£¬½á¹ûÖĞÖ»ÓĞ¡°Total Number of Instances               36     ¡±£¬¿ÉÄÜºÍ¡°¼ôÖ¦¡±ÓĞ¹Ø¡£
-#½á¹ûµÄ¼ìÑé·ÖÎö¿ÉÒÔÊ¹ÓÃÕâ¸öÃüÁî
+#Train_Carä¸­æœ‰45æ¡æ•°æ®ï¼Œç»“æœä¸­åªæœ‰â€œTotal Number of Instances               36     â€ï¼Œå¯èƒ½å’Œâ€œå‰ªæâ€æœ‰å…³ã€‚
+#ç»“æœçš„æ£€éªŒåˆ†æå¯ä»¥ä½¿ç”¨è¿™ä¸ªå‘½ä»¤
 #> table(Train_Car$Oil_Consumption,predict(C45_0,Train_Car))
 #   
 #     A  B  C

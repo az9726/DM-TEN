@@ -1,7 +1,14 @@
 #练习k-means方法，列表的使用，for循环，高水平及低水平画图，点的形状，大小、颜色等
 
 ##("Hartigan-Wong", "Lloyd", "Forgy","MacQueen")四种距离的具体含义还需要继续明确
-##变量是否要进行标准化，还远哦继续学习。
+##变量是否要进行标准化，还需要继续学习。
+
+scale(x,center = T,scale = T)
+#数据处理 center中心化，每个值都剪掉均值 scale标准化，都是T的时候就是按照正态分布标准化，
+#center = T,scale = F 的时候就是纯粹中心化
+#scale =F,center=F 还是原来的数据
+
+
 
 #生成测试用数据
 library(stats)

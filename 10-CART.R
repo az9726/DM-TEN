@@ -1,4 +1,4 @@
-﻿# 决策树算法
+# 决策树算法
 # CART算法，处理的变量可以是离散的也可以是连续的。
 # 使用rpart--计算/rpart.plot() --绘图
 
@@ -101,3 +101,6 @@ pre_Car_Cla
 table(Test_Car$分组油耗,pre_Car_Cla)
 (p=sum(as.numeric(pre_Car_Cla!=Test_Car$分组油耗))/nrow(Test_Car)) #测试集的错误率
 
+predict(m1,iris,type="probability")
+
+predict(rp_Car_Cla,Test_Car,type="vector")

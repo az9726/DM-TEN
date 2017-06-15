@@ -1,4 +1,4 @@
-#练习k-means方法，列表的使用，for循环，高水平及低水平画图，点的形状，大小、颜色等
+#练习k-means方法，列表的使用，for循环，高水平及低水平画图，点的形状，大小、颜色等 
 
 ##("Hartigan-Wong", "Lloyd", "Forgy","MacQueen")四种距离的具体含义还需要继续明确
 ##变量是否要进行标准化，还需要继续学习。
@@ -35,7 +35,7 @@ w<-list(0)
 
 for (n in (1:10)) {
        
-        w[[n]]<-kmeans(z,5,nstart=1,iter.max=n^2 ) #5--分成5簇
+        w[[n]]<-kmeans(z,5,nstart=23,iter.max=10+n^2 ) #5--分成5簇
         #item--最大迭代次数，默认是10，次数越多，结果越收敛
         #nstart--计算次数,默认为1，
         #网上建议取20~25，具体含义不太明确，认为取的大一些结果越集中
@@ -55,17 +55,16 @@ par(mfrow=c(1, 1))
 
 kk<-list()
 #algorithm = c("Hartigan-Wong", "Lloyd", "Forgy","MacQueen")
-kk[[1]]<-kmeans(z,5,nstart=10,algorithm = c("Hartigan-Wong") )
-kk[[2]]<-kmeans(z,5,nstart=10,algorithm = c("Lloyd") )
-kk[[3]]<-kmeans(z,5,nstart=10,algorithm = c("Forgy") )
-kk[[4]]<-kmeans(z,5,nstart=10,algorithm = c("MacQueen") )
+kk[[1]]<-kmeans(z,5,nstart=24,algorithm = c("Hartigan-Wong") ,iter.max=30)
+kk[[2]]<-kmeans(z,5,nstart=24,algorithm = c("Lloyd") ,iter.max=30)
+kk[[3]]<-kmeans(z,5,nstart=24,algorithm = c("Forgy") ,iter.max=30)
+kk[[4]]<-kmeans(z,5,nstart=24,algorithm = c("MacQueen") ,iter.max=30)
 
 par(mfrow=c(2, 2))
 plot(kk[[1]]$centers)
 plot(kk[[2]]$centers)
 plot(kk[[3]]$centers)
 plot(kk[[4]]$centers)
-
 
 par(mfrow=c(1, 1))
 
